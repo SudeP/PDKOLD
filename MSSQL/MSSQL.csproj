@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>DB.MSSQL</RootNamespace>
+    <AssemblyName>PDK.DB.MSSQL</AssemblyName>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Program Development Kit</Description>
+    <PackageId>PDK.DB.MSSQL</PackageId>
+    <Authors>PDK.DB.MSSQL</Authors>
+    <Product>Program Development Kit</Product>
+    <Company>SudeP</Company>
+    <Copyright>SudeP</Copyright>
+    <PackageLicenseExpression></PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.1.0" />
+  </ItemGroup>
+
+</Project>
