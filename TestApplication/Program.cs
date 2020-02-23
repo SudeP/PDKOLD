@@ -16,7 +16,7 @@ namespace TestApplication
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MONGODB());
+            Application.Run(new TestForLambda());
         }
     }
 }
