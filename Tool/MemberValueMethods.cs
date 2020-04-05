@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JSON
+namespace PDK.Tool
 {
     public static class MemberValueMethods
     {

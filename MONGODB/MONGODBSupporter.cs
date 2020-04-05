@@ -13,6 +13,5 @@ namespace PDK.DB.MONGODB
             MongoClient = mongoClient;
             mongoClient.GetDatabase("");
         }
-
     }
 }

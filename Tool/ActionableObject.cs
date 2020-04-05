@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tool
+namespace PDK.Tool
 {
     public class ActionableObject
     {

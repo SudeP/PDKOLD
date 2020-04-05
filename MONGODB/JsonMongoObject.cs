@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PDK.DB.MONGODB
+﻿namespace PDK.DB.MONGODB
 {
-    public class JsonMongoObject<BaseType>
+    public class JsonMongoObject<T>
     {
-        public static BaseType FromJson(string json) => MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BaseType>(json);
+        public static T FromJson(string json) => MongoDB.Bson.Serialization.BsonSerializer.Deserialize<T>(json);
     }
     public static class JsonMongoObject
     {
