@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PDK.Tool
 {
     public class LambdaCatch : LambdaCore
     {
-        internal LambdaCatch()
+        private LambdaCatch(List<TryObject> list)
         {
-
+            TryList = list;
         }
-        internal static LambdaCatch Create(Action<Exception> action, int tryId) => new LambdaCatch().Catch(action, tryId);
+        public static LambdaCatch Create(List<TryObject> list, Action<Exception> action, int tryId) => new LambdaCatch(list).Catch(action, tryId);
         public LambdaCatch Catch(Action<Exception> action, int tryId = -1)
         {
             if (tryId == -1)
@@ -32,6 +33,6 @@ namespace PDK.Tool
             }
             return this;
         }
-        public LambdaFinally Finally(Action action, int tryId = -1) => LambdaFinally.Create(action, tryId);
+        public LambdaFinally Finally(Action action, int tryId = -1) => LambdaFinally.Create(TryList, action, tryId);
     }
 }

@@ -4,10 +4,18 @@ using System.Threading.Tasks;
 
 namespace PDK.Tool
 {
-    public class QueueTask<T>
+    public class QueueTask
     {
-        private readonly ConcurrentQueue<Func<T>> queueList = new ConcurrentQueue<Func<T>>();
-        public Task<T> Enqueue(Func<T> task)
+        private readonly ConcurrentQueue<Func<object>> queueList = new ConcurrentQueue<Func<object>>();
+        public Task Enqueue(Action task)
+        {
+            return Enqueue(() =>
+            {
+                task.Invoke();
+                return new object();
+            });
+        }
+        public Task<T> Enqueue<T>(Func<T> task) where T : class
         {
             queueList.Enqueue(task);
 
@@ -15,8 +23,11 @@ namespace PDK.Tool
             {
                 lock (queueList)
                 {
-                    if (queueList.TryDequeue(out Func<T> result))
-                        return result.Invoke();
+                    if (queueList.TryDequeue(out Func<object> result))
+                    {
+                        var r = result.Invoke();
+                        return r as T;
+                    }
                     else
                         return default;
                 }

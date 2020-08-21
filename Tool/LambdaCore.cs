@@ -5,15 +5,15 @@ namespace PDK.Tool
 {
     public abstract class LambdaCore
     {
-        internal static int __lastId;
-        internal static int LastId
+        protected int __lastId = -1;
+        internal int LastId
         {
             get
             {
                 return ++__lastId;
             }
         }
-        public static List<TryObject> TryList { get; internal set; }
+        public List<TryObject> TryList { get; internal set; }
         public void Run()
         {
             TryList.ForEach(@try =>

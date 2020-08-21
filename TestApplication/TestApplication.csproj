@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ATUForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ATUForm.Designer.cs">
+      <DependentUpon>ATUForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Json.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,6 +78,9 @@
     <Compile Include="TestForLambda.Designer.cs">
       <DependentUpon>TestForLambda.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ATUForm.resx">
+      <DependentUpon>ATUForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Json.resx">
       <DependentUpon>Json.cs</DependentUpon>
     </EmbeddedResource>
@@ -112,13 +121,17 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ASPNET\ASPNET.csproj">
+      <Project>{9543410d-9bfe-460b-95a4-1d19e994a9d5}</Project>
+      <Name>ASPNET</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MONGODB\MONGODB.csproj">
       <Project>{e8cad751-11af-42ac-873b-8fd36c0b770a}</Project>
       <Name>MONGODB</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MSSQL\MSSQL.csproj">
+    <ProjectReference Include="..\MSSQL\SQL.csproj">
       <Project>{9e6f6b4c-6b26-4867-aad4-ee4cd7ea73d6}</Project>
-      <Name>MSSQL</Name>
+      <Name>SQL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tool\Tool.csproj">
       <Project>{be8a36dd-d0d1-4c10-a833-e85b0c08df0a}</Project>

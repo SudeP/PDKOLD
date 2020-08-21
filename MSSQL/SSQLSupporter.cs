@@ -1,29 +1,25 @@
-﻿using Microsoft.Data.SqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace PDK.SQL
 {
-    public class MSSQLSupporter : IDisposable
+    public class SSQLSupporter : IDisposable
     {
         public Exception LastException { get; internal set; }
         public SqlConnection SqlConnection { get; internal set; }
 
 
-        public MSSQLSupporter() { }
-        public MSSQLSupporter(SqlConnection sqlConnection) => SqlConnection = sqlConnection;
+        public SSQLSupporter() { }
+        public SSQLSupporter(string sqlConnectionString) : this(new SqlConnection(sqlConnectionString)) { }
+        public SSQLSupporter(SqlConnection sqlConnection) => SqlConnection = sqlConnection;
 
 
-        public T Table2First<T>(ref string query, SqlConnection sqlConnection = null) where T : new()
-        {
-            var result = Table2List<T>(ref query, sqlConnection);
-            return result is null ? default : result.FirstOrDefault();
-        }
-
-        public List<T> Table2List<T>(ref string query, SqlConnection sqlConnection = null) where T : new()
+        public T Table2First<T>(ref string query, SqlConnection sqlConnection = null) where T : class, new() => Table2List<T>(ref query, sqlConnection)?.FirstOrDefault();
+        public List<T> Table2List<T>(ref string query, SqlConnection sqlConnection = null) where T : class, new()
         {
             var ds = ToDataSet(query, sqlConnection);
             if (ds is null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
@@ -32,12 +28,12 @@ namespace PDK.SQL
         }
 
 
-        public T Table2First<T>(ref string query, DataTable dataTable) where T : new() => Table2FirstStatic<T>(ref query, dataTable);
-        public T RowToClass<T>(ref string query, DataRow dataRow, DataColumnCollection dataColumnCollection) where T : new() => RowToClassStatic<T>(ref query, dataRow, dataColumnCollection);
-        public List<T> Table2List<T>(ref string query, DataTable dataTable) where T : new() => Table2ListStatic<T>(ref query, dataTable);
+        public T Table2First<T>(ref string query, DataTable dataTable) where T : class, new() => Table2FirstStatic<T>(ref query, dataTable);
+        public T RowToClass<T>(ref string query, DataRow dataRow, DataColumnCollection dataColumnCollection) where T : class, new() => RowToClassStatic<T>(ref query, dataRow, dataColumnCollection);
+        public List<T> Table2List<T>(ref string query, DataTable dataTable) where T : class, new() => Table2ListStatic<T>(ref query, dataTable);
 
 
-        public static List<T> Table2ListStatic<T>(ref string query, DataTable dataTable) where T : new()
+        public static List<T> Table2ListStatic<T>(ref string query, DataTable dataTable) where T : class, new()
         {
             if (dataTable is null)
                 return null;
@@ -53,7 +49,7 @@ namespace PDK.SQL
 
             return targetList;
         }
-        public static T RowToClassStatic<T>(ref string query, DataRow dataRow, DataColumnCollection dataColumnCollection) where T : new()
+        public static T RowToClassStatic<T>(ref string query, DataRow dataRow, DataColumnCollection dataColumnCollection) where T : class, new()
         {
             query ??= "";
 
@@ -86,11 +82,7 @@ namespace PDK.SQL
             }
             return target;
         }
-        public static T Table2FirstStatic<T>(ref string query, DataTable dataTable) where T : new()
-        {
-            var result = Table2ListStatic<T>(ref query, dataTable);
-            return result is null ? default : result.FirstOrDefault();
-        }
+        public static T Table2FirstStatic<T>(ref string query, DataTable dataTable) where T : class, new() => Table2ListStatic<T>(ref query, dataTable)?.FirstOrDefault();
 
         public void SetDefaultSqlConnection(string sqlConnectionString) => SetDefaultSqlConnection(new SqlConnection(sqlConnectionString));
         public void SetDefaultSqlConnection(SqlConnection sqlConnection) => SqlConnection = sqlConnection;
@@ -125,10 +117,10 @@ namespace PDK.SQL
         public SqlConnection ConnectionControl(SqlConnection sqlConnection)
         {
             if (sqlConnection is null)
-                if (SqlConnection is null)
+                if (this.SqlConnection is null)
                     throw new Exception("Parameter connection and default connection null. At least one connection require to not null.");
                 else
-                    return SqlConnection;
+                    return this.SqlConnection;
             return sqlConnection;
         }
 
@@ -164,7 +156,6 @@ namespace PDK.SQL
         /// <returns></returns>
         public DataSet ToDataSet(string query, SqlConnection sqlConnection = null)
         {
-            LastException = null;
             SqlConnection sqlConnectionForReader = null;
             try
             {
@@ -196,7 +187,6 @@ namespace PDK.SQL
         /// <returns></returns>
         public SqlDataReader ToReader(out SqlConnection sqlConnectionForReader, string query, SqlConnection sqlConnection = null)
         {
-            LastException = null;
             sqlConnectionForReader = null;
             try
             {
@@ -229,7 +219,6 @@ namespace PDK.SQL
         /// <returns></returns>
         public bool ToQuery(string query, SqlConnection sqlConnection = null)
         {
-            LastException = null;
             try
             {
                 ConnectionOpen(sqlConnection);
@@ -259,7 +248,6 @@ namespace PDK.SQL
         /// <returns></returns>
         public object ToScalar(string query, SqlConnection sqlConnection = null)
         {
-            LastException = null;
             try
             {
                 ConnectionOpen(sqlConnection);

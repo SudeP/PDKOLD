@@ -23,10 +23,10 @@ namespace TestApplication
             Lambda
                 .Create()
                 .Try(() => MessageBox.Show("1"))
-                .Try(() => MessageBox.Show("2"))
+                .Try(() => MessageBox.Show((4 / 1).ToString()))
                 .Try(() => Convert.ToInt32("test"))
                 .Catch((ex) => MessageBox.Show("3"), 2)
-                .Finally(() => MessageBox.Show("9"), 1)
+                .Finally(() => MessageBox.Show("9"))
                 .Finally(() => MessageBox.Show("91"), 1)
                 .Finally(() => MessageBox.Show("10"), 1)
                 .Run();

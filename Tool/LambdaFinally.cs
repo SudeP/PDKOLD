@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PDK.Tool
 {
     public class LambdaFinally : LambdaCore
     {
-        internal LambdaFinally()
+        internal LambdaFinally(List<TryObject> list)
         {
-
+            TryList = list;
         }
-        internal static LambdaFinally Create(Action action, int tryId) => new LambdaFinally().Finally(action, tryId);
+        public static LambdaFinally Create(List<TryObject> list, Action action, int tryId) => new LambdaFinally(list).Finally(action, tryId);
         public LambdaFinally Finally(Action action, int tryId = -1)
         {
             if (tryId == -1)

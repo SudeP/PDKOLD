@@ -5,17 +5,8 @@ namespace PDK.Tool
 {
     public class Lambda : LambdaCore
     {
-        internal Lambda()
-        {
-
-        }
-        public static Lambda Create()
-        {
-            __lastId = -1;
-            TryList = new List<TryObject>();
-            GC.Collect();
-            return new Lambda();
-        }
+        private Lambda() => TryList = new List<TryObject>();
+        public static Lambda Create() => new Lambda();
         public Lambda Try(Action action)
         {
             TryList.Add(new TryObject()
@@ -25,7 +16,7 @@ namespace PDK.Tool
             });
             return this;
         }
-        public LambdaCatch Catch(Action<Exception> action, int tryId = -1) => LambdaCatch.Create(action, tryId);
-        public LambdaFinally Finally(Action action, int tryId = -1) => LambdaFinally.Create(action, tryId);
+        public LambdaCatch Catch(Action<Exception> action, int tryId = -1) => LambdaCatch.Create(TryList, action, tryId);
+        public LambdaFinally Finally(Action action, int tryId = -1) => LambdaFinally.Create(TryList, action, tryId);
     }
 }
