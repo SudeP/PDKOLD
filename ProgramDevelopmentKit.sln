@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Support", "Support\Support.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPChannel", "TCPChannel\TCPChannel.csproj", "{FE2C354E-0FBB-4A12-B37A-946FC97FD197}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQL", "SQL\SQL.csproj", "{82782380-270F-4B1D-9FD8-072357D1C25F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQL", "SQL\SQL.csproj", "{82782380-270F-4B1D-9FD8-072357D1C25F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
