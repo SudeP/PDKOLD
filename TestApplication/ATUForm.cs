@@ -25,7 +25,6 @@ namespace TestApplication
             //v = ATU.Get(Method0);
             //v = ATU.Get(Method1);
             //v = ATU.Get(Method2);
-            v = ATU.Get<int,int>(Method3);
             //v = ATU.Get(Method4);
             //v = ATU.Get(Method5);
         }

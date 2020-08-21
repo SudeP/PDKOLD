@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "MSSQL": {
-      "commandName": "Project",
-      "sqlDebugging": true,
-      "nativeDebugging": true
-    }
-  }
-}
