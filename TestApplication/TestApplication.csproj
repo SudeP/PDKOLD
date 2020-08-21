@@ -121,10 +121,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ASPNET\ASPNET.csproj">
-      <Project>{9543410d-9bfe-460b-95a4-1d19e994a9d5}</Project>
-      <Name>ASPNET</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MONGODB\MONGODB.csproj">
       <Project>{e8cad751-11af-42ac-873b-8fd36c0b770a}</Project>
       <Name>MONGODB</Name>
