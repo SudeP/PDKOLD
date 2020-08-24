@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>PDK.SQL</AssemblyName>
-    <RootNamespace>PDK.SQL</RootNamespace>
-    <Copyright>Sudep</Copyright>
+    <Version>1.0.4</Version>
     <Description>Sudep</Description>
+    <Copyright>Sudep</Copyright>
+    <RootNamespace>PDK.SQL</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

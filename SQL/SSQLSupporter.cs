@@ -43,7 +43,7 @@ namespace PDK.SQL
         }
         public static T RowToClassStatic<T>(ref string query, DataRow dataRow, DataColumnCollection dataColumnCollection) where T : class, new()
         {
-            query ??= "";
+            query = query is null ? "" : query;
 
             var target = new T();
 
@@ -207,9 +207,8 @@ namespace PDK.SQL
             {
                 ConnectionOpen(sqlConnection);
 
-                using SqlCommand sqlCommand = new SqlCommand(query, ConnectionControl(sqlConnection));
-
-                sqlCommand.ExecuteNonQuery();
+                using (SqlCommand sqlCommand = new SqlCommand(query, ConnectionControl(sqlConnection)))
+                    sqlCommand.ExecuteNonQuery();
 
                 return true;
             }
@@ -236,11 +235,12 @@ namespace PDK.SQL
             {
                 ConnectionOpen(sqlConnection);
 
-                using SqlCommand sqlCommand = new SqlCommand(query, ConnectionControl(sqlConnection));
+                using (SqlCommand sqlCommand = new SqlCommand(query, ConnectionControl(sqlConnection)))
+                {
+                    object obj = sqlCommand.ExecuteScalar();
 
-                object obj = sqlCommand.ExecuteScalar();
-
-                return obj;
+                    return obj;
+                }
             }
             catch (Exception ex)
             {
