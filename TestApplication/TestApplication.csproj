@@ -108,13 +108,17 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Data.SqlClient">
-      <Version>4.8.1</Version>
+      <Version>4.8.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MONGODB\MONGODB.csproj">
       <Project>{e8cad751-11af-42ac-873b-8fd36c0b770a}</Project>
       <Name>MONGODB</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SQL\SQL.csproj">
+      <Project>{7f5a7e2d-3689-4c44-aa42-49a3b2270046}</Project>
+      <Name>SQL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tool\Tool.csproj">
       <Project>{be8a36dd-d0d1-4c10-a833-e85b0c08df0a}</Project>

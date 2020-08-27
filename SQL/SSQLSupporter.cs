@@ -83,9 +83,9 @@ namespace PDK.SQL
         /// <param name="connection"></param>
         public void ConnectionOpen(SqlConnection sqlConnection = null)
         {
-            sqlConnection = ConnectionControl(sqlConnection);
-            if (sqlConnection.State == ConnectionState.Closed || sqlConnection.State == ConnectionState.Broken)
-                sqlConnection.Open();
+            var tempSqlConnection = ConnectionControl(sqlConnection);
+            if (tempSqlConnection.State == ConnectionState.Closed || tempSqlConnection.State == ConnectionState.Broken)
+                tempSqlConnection.Open();
         }
         /// <summary>
         /// 
@@ -93,23 +93,23 @@ namespace PDK.SQL
         /// <param name="connection">This method uses to default sql connection if parameter connection is null</param>
         public void ConnectionClose(SqlConnection sqlConnection = null)
         {
-            sqlConnection = ConnectionControl(sqlConnection);
-            if (sqlConnection.State != ConnectionState.Closed || sqlConnection.State != ConnectionState.Broken)
-                sqlConnection.Close();
+            var tempSqlConnection = ConnectionControl(sqlConnection);
+            if (tempSqlConnection.State != ConnectionState.Closed || tempSqlConnection.State != ConnectionState.Broken)
+                tempSqlConnection.Close();
         }
         /// <summary>
         /// This method uses to default sql connection if parameter connection is null
         /// </summary>
         /// <param name="sqlConnection"></param>
         /// <returns></returns>
-        public SqlConnection ConnectionControl(SqlConnection sqlConnection)
+        public SqlConnection ConnectionControl(SqlConnection tempSqlConnection)
         {
-            if (sqlConnection is null)
-                if (this.SqlConnection is null)
+            if (tempSqlConnection is null)
+                if (SqlConnection is null)
                     throw new Exception("Parameter connection and default connection null. At least one connection require to not null.");
                 else
-                    return this.SqlConnection;
-            return sqlConnection;
+                    return SqlConnection;
+            return tempSqlConnection;
         }
         /// <summary>
         /// This method uses to default sql connection if parameter connection is null
@@ -140,10 +140,10 @@ namespace PDK.SQL
         /// <returns></returns>
         public DataSet ToDataSet(string query, SqlConnection sqlConnection = null)
         {
-            SqlConnection sqlConnectionForReader = null;
+            LastException = null;
             try
             {
-                SqlDataReader sqlDataReader = ToReader(out sqlConnectionForReader, query, sqlConnection);
+                SqlDataReader sqlDataReader = ToReaderBeforeClose(query, sqlConnection);
 
                 DataSet dataSet = new DataSet();
 
@@ -160,7 +160,7 @@ namespace PDK.SQL
             }
             finally
             {
-                ConnectionClose(sqlConnectionForReader);
+                ConnectionClose(sqlConnection ?? SqlConnection);
             }
         }
         /// <summary>
@@ -169,20 +169,14 @@ namespace PDK.SQL
         /// <param name="query"></param>
         /// <param name="sqlConnection"></param>
         /// <returns></returns>
-        public SqlDataReader ToReader(out SqlConnection sqlConnectionForReader, string query, SqlConnection sqlConnection = null)
+        public SqlDataReader ToReaderBeforeClose(string query, SqlConnection sqlConnection = null)
         {
-            sqlConnectionForReader = null;
+            LastException = null;
             try
             {
-                ConnectionOpen(sqlConnection);
+                ConnectionOpen(sqlConnection ?? SqlConnection);
 
-                sqlConnectionForReader = new SqlConnection(SqlConnection.ConnectionString);
-
-                ConnectionClose(sqlConnection);
-
-                ConnectionOpen(sqlConnectionForReader);
-
-                SqlCommand sqlCommand = new SqlCommand(query, ConnectionControl(sqlConnectionForReader));
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection ?? SqlConnection);
 
                 SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
@@ -203,6 +197,7 @@ namespace PDK.SQL
         /// <returns></returns>
         public bool ToQuery(string query, SqlConnection sqlConnection = null)
         {
+            LastException = null;
             try
             {
                 ConnectionOpen(sqlConnection);
@@ -231,6 +226,7 @@ namespace PDK.SQL
         /// <returns></returns>
         public object ToScalar(string query, SqlConnection sqlConnection = null)
         {
+            LastException = null;
             try
             {
                 ConnectionOpen(sqlConnection);
