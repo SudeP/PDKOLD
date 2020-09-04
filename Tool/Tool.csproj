@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>PDK.Tool</AssemblyName>
     <RootNamespace>PDK.Tool</RootNamespace>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <RepositoryUrl>https://github.com/SudeP/PDK</RepositoryUrl>
     <RepositoryType>GITHUB</RepositoryType>
   </PropertyGroup>
