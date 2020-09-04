@@ -195,6 +195,16 @@ namespace PDK.Tool
                 throw new ArgumentOutOfRangeException("string.Legth > 0 required");
         }
     }
+    public static class SoupRecipeExtensions
+    {
+        public static SoupRecipe soupRecipe = new SoupRecipe();
+        public static string Salt;
+        public static void SetSalt(string salt) => Salt = salt;
+        public static string Stir(this string pureSoup) => pureSoup.Stir(Salt);
+        public static string Stir(this string pureSoup, string salt) => soupRecipe.Stir(pureSoup, salt);
+        public static string Fractionate(this string impureSoup) => impureSoup.Fractionate(Salt);
+        public static string Fractionate(this string impureSoup, string salt) => soupRecipe.Fractionate(impureSoup, salt);
+    }
     internal class Const
     {
         public readonly int binarySystemCode = 2;
@@ -220,8 +230,7 @@ namespace PDK.Tool
             "8",
             "9"
         };
-        private string[,] quantumVS;
-        public string[,] Quantum => quantumVS;
+        public string[,] Quantum { get; private set; }
         private readonly Tool tool;
         public Numbers(Tool tool, char c = '\0')
         {
@@ -234,7 +243,7 @@ namespace PDK.Tool
         }
         private void SetQuantumValues(string[] numbers)
         {
-            quantumVS = new string[,]
+            Quantum = new string[,]
             {
                 { "00" , numbers.Length == 4 ? numbers[0] : GetNumber(ref numbers) },
                 { "01" , numbers.Length == 4 ? numbers[1] : GetNumber(ref numbers) },
@@ -266,8 +275,8 @@ namespace PDK.Tool
         public override string ToString()
         {
             string rev = string.Empty;
-            for (int i = 0; i < quantumVS.GetLongLength(0); i++)
-                rev += quantumVS[i, 1];
+            for (int i = 0; i < Quantum.GetLongLength(0); i++)
+                rev += Quantum[i, 1];
             return (char)long.Parse(rev) + "";
         }
     }
@@ -317,27 +326,23 @@ namespace PDK.Tool
 
             using (MemoryStream ms = new MemoryStream())
             {
-                using (RijndaelManaged AES = new RijndaelManaged())
+                using RijndaelManaged AES = new RijndaelManaged();
+                using Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
+                AES.KeySize = 256;
+
+                AES.BlockSize = 128;
+                AES.Key = key.GetBytes(AES.KeySize / 8);
+                AES.IV = key.GetBytes(AES.BlockSize / 8);
+
+                AES.Mode = CipherMode.CBC;
+
+                using (CryptoStream cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
                 {
-                    using (Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000))
-                    {
-                        AES.KeySize = 256;
-
-                        AES.BlockSize = 128;
-                        AES.Key = key.GetBytes(AES.KeySize / 8);
-                        AES.IV = key.GetBytes(AES.BlockSize / 8);
-
-                        AES.Mode = CipherMode.CBC;
-
-                        using (CryptoStream cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
-                        {
-                            cs.Write(bytesToBeEncrypted, 0, bytesToBeEncrypted.Length);
-                            cs.Close();
-                        }
-
-                        encryptedBytes = ms.ToArray();
-                    }
+                    cs.Write(bytesToBeEncrypted, 0, bytesToBeEncrypted.Length);
+                    cs.Close();
                 }
+
+                encryptedBytes = ms.ToArray();
             }
 
             return encryptedBytes;
@@ -350,25 +355,22 @@ namespace PDK.Tool
 
             using (MemoryStream ms = new MemoryStream())
             {
-                using (RijndaelManaged AES = new RijndaelManaged())
+                using RijndaelManaged AES = new RijndaelManaged();
+                using Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
+                AES.KeySize = 256;
 
-                using (Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000))
+                AES.BlockSize = 128;
+                AES.Key = key.GetBytes(AES.KeySize / 8);
+                AES.IV = key.GetBytes(AES.BlockSize / 8);
+                AES.Mode = CipherMode.CBC;
+
+                using (CryptoStream cs = new CryptoStream(ms, AES.CreateDecryptor(), CryptoStreamMode.Write))
                 {
-                    AES.KeySize = 256;
-
-                    AES.BlockSize = 128;
-                    AES.Key = key.GetBytes(AES.KeySize / 8);
-                    AES.IV = key.GetBytes(AES.BlockSize / 8);
-                    AES.Mode = CipherMode.CBC;
-
-                    using (CryptoStream cs = new CryptoStream(ms, AES.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(bytesToBeDecrypted, 0, bytesToBeDecrypted.Length);
-                        cs.Close();
-                    }
-
-                    decryptedBytes = ms.ToArray();
+                    cs.Write(bytesToBeDecrypted, 0, bytesToBeDecrypted.Length);
+                    cs.Close();
                 }
+
+                decryptedBytes = ms.ToArray();
             }
 
             return decryptedBytes;

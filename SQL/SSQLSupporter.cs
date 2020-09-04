@@ -145,6 +145,9 @@ namespace PDK.SQL
             {
                 SqlDataReader sqlDataReader = ToReaderBeforeClose(query, sqlConnection);
 
+                if (LastException != null)
+                    return default;
+
                 DataSet dataSet = new DataSet();
 
                 while (!sqlDataReader.IsClosed)
