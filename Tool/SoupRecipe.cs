@@ -270,6 +270,17 @@ namespace PDK.Tool
             return (char)long.Parse(rev) + "";
         }
     }
+    public class Base64
+    {
+        public static string Encrypt(string plainText)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(plainText));
+        }
+        public static string Decrypt(string encryptedText)
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(encryptedText));
+        }
+    }
     public class Cipher
     {
         public static string Encrypt(string plainText, string password)
@@ -280,8 +291,8 @@ namespace PDK.Tool
             if (password == null)
                 password = string.Empty;
 
-            var bytesToBeEncrypted = Encoding.ASCII.GetBytes(plainText);
-            var passwordBytes = Encoding.ASCII.GetBytes(password);
+            var bytesToBeEncrypted = Encoding.UTF8.GetBytes(plainText);
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
 
             using (SHA256 sHA256 = SHA256.Create())
                 passwordBytes = sHA256.ComputeHash(passwordBytes);
@@ -299,14 +310,14 @@ namespace PDK.Tool
                 password = string.Empty;
 
             var bytesToBeDecrypted = Convert.FromBase64String(encryptedText);
-            var passwordBytes = Encoding.ASCII.GetBytes(password);
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
 
             using (SHA256 sHA256 = SHA256.Create())
                 passwordBytes = sHA256.ComputeHash(passwordBytes);
 
             var bytesDecrypted = Decrypt(bytesToBeDecrypted, passwordBytes);
 
-            return Encoding.ASCII.GetString(bytesDecrypted);
+            return Encoding.UTF8.GetString(bytesDecrypted);
         }
         private static byte[] Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)
         {
