@@ -94,7 +94,7 @@ namespace PDK.SQL
         public void ConnectionClose(SqlConnection sqlConnection = null)
         {
             var tempSqlConnection = ConnectionControl(sqlConnection);
-            if (tempSqlConnection.State != ConnectionState.Closed || tempSqlConnection.State != ConnectionState.Broken)
+            if (tempSqlConnection.State != ConnectionState.Closed)
                 tempSqlConnection.Close();
         }
         /// <summary>
@@ -252,6 +252,14 @@ namespace PDK.SQL
                 ConnectionClose(sqlConnection);
             }
         }
-        public void Dispose() => SqlConnection?.Dispose();
+        public void Dispose()
+        {
+            if (SqlConnection != null)
+            {
+                if (SqlConnection.State != ConnectionState.Closed)
+                    SqlConnection.Close();
+                SqlConnection.Dispose();
+            }
+        }
     }
 }
