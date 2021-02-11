@@ -3,16 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>PDK.SQL</AssemblyName>
-    <Version>1.0.8</Version>
+    <Version>1.1.0</Version>
     <Description>Sudep</Description>
     <Copyright>Sudep</Copyright>
     <RootNamespace>PDK.SQL</RootNamespace>
     <RepositoryUrl>https://github.com/SudeP/PDK</RepositoryUrl>
     <RepositoryType>GITHUB</RepositoryType>
-    <PackageReleaseNotes>Connection Open wait 5 second for connecting</PackageReleaseNotes>
+    <PackageReleaseNotes>Add Newtonsoft and infoMessageReader for Sql  Server InfoMessages</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 

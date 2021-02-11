@@ -9,8 +9,11 @@ namespace PDK.SQL
 {
     public class SSQLSupporter : IDisposable
     {
-        public Exception LastException { get; internal set; }
         public SqlConnection SqlConnection { get; internal set; }
+        public Exception Exception { get; internal set; }
+        public string InfoMessages { get; internal set; }
+        public string RawInfoMessages { get; internal set; }
+        public int CommandTimeout { get; set; } = 30;
         public SSQLSupporter() { }
         public SSQLSupporter(string sqlConnectionString) : this(new SqlConnection(sqlConnectionString)) { }
         public SSQLSupporter(SqlConnection sqlConnection) => SqlConnection = sqlConnection;
@@ -81,14 +84,23 @@ namespace PDK.SQL
         /// This method uses to default sql connection if parameter connection is null
         /// </summary>
         /// <param name="connection"></param>
+        private void InfoMessageReader(object sender, SqlInfoMessageEventArgs e)
+        {
+            InfoMessages += Newtonsoft.Json.JsonConvert.SerializeObject(e) + Environment.NewLine;
+            RawInfoMessages += e.Message + Environment.NewLine;
+        }
         public void ConnectionOpen(SqlConnection sqlConnection = null)
         {
             var tempSqlConnection = ConnectionControl(sqlConnection);
             if (tempSqlConnection.State == ConnectionState.Closed || tempSqlConnection.State == ConnectionState.Broken)
                 tempSqlConnection.Open();
+
+            InfoMessages = string.Empty;
+            tempSqlConnection.InfoMessage -= InfoMessageReader;
+            tempSqlConnection.InfoMessage += InfoMessageReader;
         }
         /// <summary>
-        /// 
+        /// Connection Close
         /// </summary>
         /// <param name="connection">This method uses to default sql connection if parameter connection is null</param>
         public void ConnectionClose(SqlConnection sqlConnection = null)
@@ -140,12 +152,12 @@ namespace PDK.SQL
         /// <returns></returns>
         public DataSet ToDataSet(string query, SqlConnection sqlConnection = null)
         {
-            LastException = null;
+            Exception = null;
             try
             {
                 SqlDataReader sqlDataReader = ToReaderBeforeClose(query, sqlConnection);
 
-                if (LastException != null)
+                if (Exception != null)
                     return default;
 
                 DataSet dataSet = new DataSet();
@@ -157,7 +169,7 @@ namespace PDK.SQL
             }
             catch (Exception ex)
             {
-                LastException = ex;
+                Exception = ex;
 
                 return default;
             }
@@ -174,12 +186,15 @@ namespace PDK.SQL
         /// <returns></returns>
         public SqlDataReader ToReaderBeforeClose(string query, SqlConnection sqlConnection = null)
         {
-            LastException = null;
+            Exception = null;
             try
             {
                 ConnectionOpen(sqlConnection ?? SqlConnection);
 
-                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection ?? SqlConnection);
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection ?? SqlConnection)
+                {
+                    CommandTimeout = CommandTimeout
+                };
 
                 SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
@@ -187,7 +202,7 @@ namespace PDK.SQL
             }
             catch (Exception ex)
             {
-                LastException = ex;
+                Exception = ex;
 
                 return default;
             }
@@ -200,19 +215,22 @@ namespace PDK.SQL
         /// <returns></returns>
         public bool ToQuery(string query, SqlConnection sqlConnection = null)
         {
-            LastException = null;
+            Exception = null;
             try
             {
                 ConnectionOpen(sqlConnection);
 
-                using (SqlCommand sqlCommand = new SqlCommand(query, ConnectionControl(sqlConnection)))
+                using (SqlCommand sqlCommand = new SqlCommand(query, ConnectionControl(sqlConnection))
+                {
+                    CommandTimeout = CommandTimeout
+                })
                     sqlCommand.ExecuteNonQuery();
 
                 return true;
             }
             catch (Exception ex)
             {
-                LastException = ex;
+                Exception = ex;
 
                 return false;
             }
@@ -229,12 +247,15 @@ namespace PDK.SQL
         /// <returns></returns>
         public object ToScalar(string query, SqlConnection sqlConnection = null)
         {
-            LastException = null;
+            Exception = null;
             try
             {
                 ConnectionOpen(sqlConnection);
 
-                using (SqlCommand sqlCommand = new SqlCommand(query, ConnectionControl(sqlConnection)))
+                using (SqlCommand sqlCommand = new SqlCommand(query, ConnectionControl(sqlConnection))
+                {
+                    CommandTimeout = CommandTimeout
+                })
                 {
                     object obj = sqlCommand.ExecuteScalar();
 
@@ -243,7 +264,7 @@ namespace PDK.SQL
             }
             catch (Exception ex)
             {
-                LastException = ex;
+                Exception = ex;
 
                 return default;
             }
